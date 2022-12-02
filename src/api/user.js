@@ -7,6 +7,13 @@ export function login(data) {
     data
   })
 }
+// 获取用户信息接口
+export function getUserInfo() {
+  return request({
+    url: '/sys/profile',
+    method: 'POST'
+  })
+}
 
 export function getInfo(token) {}
 
