@@ -1,5 +1,5 @@
-import { login, getUserInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
+import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 
 export default {
   namespaced: true,
@@ -16,6 +16,7 @@ export default {
     SET_TOKEN(state, token) {
       state.token = token
       setToken(token)
+      setTimeStamp()
     },
     // 删除Token
     REMOVE_TOKEN(state) {
@@ -42,8 +43,13 @@ export default {
     // 请求用户数据
     async getUserInfo(context) {
       const result = await getUserInfo()
-      context.commit('SET_USER_INFO', result)
+      const baseInfo = await getUserDetailById(result.userId)
+      context.commit('SET_USER_INFO', { ...result, ...baseInfo })
       return result
+    },
+    logout(context) {
+      context.commit('REMOVE_TOKEN')
+      context.commit('REMOVE_USER_INFO')
     }
   }
 }
