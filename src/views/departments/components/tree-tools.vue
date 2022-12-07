@@ -45,7 +45,6 @@ export default {
   },
   methods: {
     operateDepts(type) {
-      console.log(type)
       if (type === 'add') {
         this.$emit('addDepts', this.treeNode)
         // 添加
