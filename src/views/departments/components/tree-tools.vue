@@ -49,6 +49,7 @@ export default {
         this.$emit('addDepts', this.treeNode)
         // 添加
       } else if (type === 'edit') {
+        this.$emit('editDepts', this.treeNode)
         // 修改
       } else {
         this.$confirm('确定要删除该部门吗')
