@@ -147,7 +147,8 @@ export default {
         if (isOk) {
           try {
             // await this['user/login'](this.loginForm)
-            await this.$store.dispatch('user/login', this.loginForm)
+            const res = await this.$store.dispatch('user/login', this.loginForm)
+            console.log(res)
             this.$router.push('/')
           } catch (error) {
             console.log(error)
