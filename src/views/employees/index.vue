@@ -6,8 +6,15 @@
           <span>共{{ page.total }}条记录</span>
         </template>
         <template #after>
-          <el-button size="small" type="warning">导入</el-button>
-          <el-button size="small" type="danger">导出</el-button>
+          <el-button
+            size="small"
+            type="warning"
+            @click="$router.push('/import?type=user')"
+            >导入</el-button
+          >
+          <el-button size="small" type="danger" @click="exportData"
+            >导出</el-button
+          >
           <el-button size="small" type="primary" @click="showDialog = true"
             >新增员工</el-button
           >
@@ -110,7 +117,7 @@ export default {
       this.getEmployeeList()
     },
     formatEmployment(row, column, cellValue, index) {
-      const obj = EmployeeEnum.hireType.find((itme) => itme.id === cellValue)
+      const obj = EmployeeEnum.hireType.find((itme) => itme.id === +cellValue)
       return obj ? obj.value : '未知'
     },
     async deleteEmployee(id) {
@@ -122,6 +129,71 @@ export default {
       } catch (error) {
         console.log(error)
       }
+    },
+    // exportData() {
+    //   const headers = {
+    //     手机号: 'mobile',
+    //     姓名: 'username',
+    //     入职日期: 'timeOfEntry',
+    //     聘用形式: 'formOfEmployment',
+    //     转正日期: 'correctionTime',
+    //     工号: 'workNumber',
+    //     部门: 'departmentName'
+    //   }
+    //   import('@/vendor/Export2Excel').then(async (excel) => {
+    //     const { rows } = await getEmployeeList({
+    //       page: 1,
+    //       size: this.page.total
+    //     })
+    //     const data = this.formatJson(headers, rows)
+    //     excel.export_json_to_excel({
+    //       header: Object.keys[headers],
+    //       data,
+    //       filename: '员工信息表',
+    //       autoWidth: true
+    //     })
+    //   })
+    // },
+    // formatJson(headers, rows) {
+    //   return rows.map((item) => {
+    //     console.log(1)
+    //     return Object.keys(headers).map((key) => {
+    //       console.log(2)
+    //       return item[headers[key]]
+    //     })
+    //   })
+    // }
+    exportData() {
+      const headers = {
+        姓名: 'username',
+        手机号: 'mobile',
+        入职日期: 'timeOfEntry',
+        聘用形式: 'formOfEmployment',
+        转正日期: 'correctionTime',
+        工号: 'workNumber',
+        部门: 'departmentName'
+      }
+      import('@/vendor/Export2Excel').then(async (excel) => {
+        const { rows } = await getEmployeeList({
+          page: 1,
+          size: this.page.total
+        })
+        const data = this.formatJson(headers, rows)
+        excel.export_json_to_excel({
+          header: Object.keys(headers),
+          data,
+          filename: '员工表',
+          autoWidth: true,
+          bookType: 'xlsx'
+        })
+      })
+    },
+    formatJson(headers, rows) {
+      return rows.map((item) => {
+        return Object.keys(headers).map((key) => {
+          return item[headers[key]]
+        })
+      })
     }
   }
 }
