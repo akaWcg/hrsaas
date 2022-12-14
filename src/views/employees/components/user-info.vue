@@ -58,6 +58,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
+            <ImageUpload ref="staffPhoto"></ImageUpload>
           </el-form-item>
         </el-col>
       </el-row>
@@ -90,6 +91,7 @@
         <!-- 员工照片 -->
 
         <el-form-item label="员工照片">
+          <ImageUpload ref="myStaffPhoto"></ImageUpload>
           <!-- 放置上传图片 -->
         </el-form-item>
         <el-form-item label="国家/地区">
@@ -472,6 +474,11 @@ export default {
     async getUserDetailById() {
       try {
         this.userInfo = await getUserDetailById(this.userId)
+        if (this.userInfo.staffPhoto && this.userInfo.staffPhoto.trim()) {
+          this.$refs.staffPhoto.fileList = [
+            { url: this.userInfo.staffPhoto, upload: true }
+          ]
+        }
       } catch (error) {
         console.log(error)
       }
@@ -479,13 +486,26 @@ export default {
     async getPersonalDetail() {
       try {
         this.formData = await getPersonalDetail(this.userId)
+        if (this.formData.staffPhoto && this.formData.staffPhoto.trim()) {
+          this.$refs.myStaffPhoto.fileList = [
+            { url: this.formData.staffPhoto, upload: true }
+          ]
+        }
       } catch (error) {
         console.log(error)
       }
     },
     async saveUser() {
       try {
-        await saveUserDetailById(this.userInfo)
+        const fileList = this.$refs.staffPhoto.fileList
+        if (fileList.some((item) => !item.upload)) {
+          this.$message.warning('您当前还有图片没有上传完成')
+          return
+        }
+        await saveUserDetailById({
+          ...this.userInfo,
+          staffPhoto: fileList && fileList.length ? fileList[0].url : ' '
+        })
         this.$message.success('保存成功')
       } catch (error) {
         console.log(error)
@@ -493,7 +513,15 @@ export default {
     },
     async savePersonal() {
       try {
-        await updatePersonal({ ...this.formData, id: this.userId })
+        const fileList = this.$refs.myStaffPhoto.fileList
+        if (fileList.some((item) => !item.upload)) {
+          this.$message.warning('您当前还有图片没有上传完成！')
+          return
+        }
+        await updatePersonal({
+          ...this.formData,
+          staffPhoto: fileList && fileList.length ? fileList[0].url : ' '
+        })
         this.$message.success('保存成功')
       } catch (error) {
         console.log(error)
