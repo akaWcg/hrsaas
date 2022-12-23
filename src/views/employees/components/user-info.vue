@@ -504,7 +504,7 @@ export default {
         }
         await saveUserDetailById({
           ...this.userInfo,
-          staffPhoto: fileList && fileList.length ? fileList[0].url : ' '
+          staffPhoto: fileList && fileList.length ? fileList[0].url : ''
         })
         this.$message.success('保存成功')
       } catch (error) {

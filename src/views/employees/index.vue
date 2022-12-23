@@ -57,7 +57,9 @@
           <el-table-column prop="enableState" label="账户状态" sortable="">
             <template slot-scope="{ row }">
               <!-- 根据当前状态来确定 是否打开开关 -->
-              <el-switch :value="row.enableState === 1" />
+              <el-switch
+                :value="row.enableState === 1 || row.enableState === '1'"
+              />
             </template>
           </el-table-column>
           <el-table-column label="操作" sortable="" fixed="right" width="280">
@@ -71,7 +73,9 @@
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
+              <el-button type="text" size="small" @click="editRole(row.id)"
+                >角色</el-button
+              >
               <el-button
                 type="text"
                 size="small"
@@ -109,6 +113,11 @@
         <canvas ref="myCanvas" />
       </el-row>
     </el-dialog>
+    <AssignRole
+      ref="assignRole"
+      :show-role-dialog.sync="showRoleDialog"
+      :user-id="userId"
+    ></AssignRole>
   </div>
 </template>
 
@@ -118,12 +127,15 @@ import EmployeeEnum from '@/api/constant/employees'
 import AddDemployee from './components/add-employee.vue'
 import { formatDate } from '@/filters'
 import QrCode from 'qrcode'
+import AssignRole from './assign-role.vue'
 export default {
   components: {
-    AddDemployee
+    AddDemployee,
+    AssignRole
   },
   data() {
     return {
+      showRoleDialog: false,
       loading: false,
       list: [],
       page: {
@@ -132,7 +144,8 @@ export default {
         total: 0 // 总数
       },
       showDialog: false,
-      showCodeDialog: false
+      showCodeDialog: false,
+      userId: null
     }
   },
   created() {
@@ -258,6 +271,11 @@ export default {
       } else if (url === '') {
         this.$message.warning('该用户还未上传头像')
       }
+    },
+    async editRole(id) {
+      this.userId = id
+      await this.$refs.assignRole.getUserDetailById(id)
+      this.showRoleDialog = true
     }
   }
 }
