@@ -1,19 +1,37 @@
-// 导出员工路由规则
+
 import Layout from '@/layout'
-export default {
+
+const attendRouter = {
   path: '/attendances',
-  name: 'attendances',
   component: Layout,
+  name: 'attendances',
   children: [
     {
-      // 二级路由path不写的话 默认和一级路由共用一个
       path: '',
       component: () => import('@/views/attendances'),
-      // 路由元信息 是储存数据的地方 可以放任何内容
+      name: 'attendances',
       meta: {
         title: '考勤',
-        icon: 'skill'
+        icon: 'excel' }
+    },
+    {
+      path: 'archiving',
+      component: () => import('@/views/attendances/historical'),
+      name: 'archiving',
+      hidden: true,
+      meta: {
+        title: '归档'
+      }
+    },
+    {
+      path: 'report/:month',
+      component: () => import('@/views/attendances/report'),
+      name: 'reports',
+      hidden: true,
+      meta: {
+        title: '报表'
       }
     }
   ]
 }
+export default attendRouter
