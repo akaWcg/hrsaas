@@ -19,12 +19,16 @@ import * as directives from '@/directives'
 
 import components from './components'
 
+import checkPermission from './mixin/checkPermission'
+
 import * as filters from '@/filters' // 引入工具类
 // 注册全局的过滤器
 Object.keys(filters).forEach((key) => {
   // 注册过滤器
   Vue.filter(key, filters[key])
 })
+
+Vue.mixin(checkPermission)
 
 // 注册components
 Vue.use(components)
